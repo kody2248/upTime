@@ -1,18 +1,25 @@
 import { ipcMain, app } from 'electron';
-//import sharp from 'sharp';
+import sharp from 'sharp';
 
 const fs = require('fs');
 const path = require('path');
+
 const appData = app.getPath('appData');
 
-async function resizeImage(  arg, output ) {
+async function resizeImage(event, file, output) {
   try {
-    await sharp(arg)
+    await sharp(file)
       .resize({
         width: 80,
-        height: 80
+        height: 80,
       })
-      .toFile( output );
+      .toFile(output, (err, info) => {
+        if (err) {
+          event.reply('imageHandler', err);
+        } else {
+          event.reply('imageHandler', info);
+        }
+      });
   } catch (error) {
     console.log(error);
   }
@@ -32,16 +39,15 @@ ipcMain.on('fetchDeviceData', async (event, arg) => {
   event.reply('fetchDeviceData', data);
 });
 
-// ipcMain.on('imageHandler', (event, arg) => {
-//   console.log('attach icon from main');
-//   console.log(arg);
-//   console.log(app.getPath('appData'));
+ipcMain.on('imageHandler', (event, arg) => {
+  const dir = `${app.getPath('appData')}\\UpTime\\images`;
+  const type = arg.type.replace(/(.*)\//g, '');
+  const output = `${dir}\\${arg.name}.${type}`;
 
-//   console.log(__dirname);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
 
-//   let output = `${appData}\\discord-alerts\\images\\${arg.name}.jpg`;
-
-//   // Sharp decalration incorrect
-//   resizeImage(arg.path, output);
-
-// });
+  // Sharp decalration incorrect
+  resizeImage(event, arg.path, output);
+});

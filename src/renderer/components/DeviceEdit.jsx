@@ -17,6 +17,7 @@ const DeviceEdit = (props) => {
   const [iconState, setIcon] = useState('');
 
   const [iconUpload, setIconUpload] = useState('');
+  const [iconUploadStatus, seticonUploadStatus] = useState(false)
 
   const toggleImage = () => {
     let image = document.getElementsByClassName('device-icon-display');
@@ -63,23 +64,23 @@ const DeviceEdit = (props) => {
       size,
       type,
     } = e.target.files[0];
-    console.log(imgName);
-    setIconUpload({
-      imgName,
-      path,
+    setIcon({
+      name: imgName,
+      path: `file:\\\\${path}`,
       size,
       type,
     });
+
+    console.log(iconState.path);
 
     // Listen for reply from main and set states
     window.electron.ipcRenderer.on('imageHandler', (arg) => {
       console.log(arg);
       console.log('render image handler');
+      seticonUploadStatus(true);
     });
     // Call to main to fetch device list from data
-    console.log(iconUpload);
-    console.log(type);
-    window.electron.ipcRenderer.send('imageHandler', { path, name: nameState });
+    window.electron.ipcRenderer.send('imageHandler', { path, name: nameState, type });
   };
 
   // Fire when new object is passed
@@ -89,9 +90,6 @@ const DeviceEdit = (props) => {
     setIp(ip);
     setPort(port);
     setIcon(icon);
-    console.log(
-      iconState === '' ? 'device-icon-upload d-none' : 'device-icon-upload'
-    );
   }, [device]);
 
   return (
@@ -157,16 +155,33 @@ const DeviceEdit = (props) => {
           >
             <div className="device-icon-details">
               <div className="row no-gutters">
-                <div className="device-icon-image"></div>
+                <div className="device-icon-image">
+                  <img src={iconState.path} alt="icon" />
+                </div>
 
                 <div className="col-md-6">
                   <p className="device-icon-file">{iconState.name}</p>
-                  <p className="device-icon-size">4 mb</p>
+                  <p className="device-icon-size">{iconState.size}</p>
                 </div>
                 <div className="col-md-3">
-                  <div className="device-icon-controls" onClick={toggleImage}>
+                  <div
+                    className={
+                      iconUploadStatus
+                        ? 'device-icon-controls'
+                        : 'd-none device-icon-controls'
+                    }
+                    role="button"
+                    tabIndex="0"
+                    onClick={toggleImage}
+                    onKeyPress={toggleImage}
+                  >
                     <DeleteForeverIcon />
                   </div>
+                  <div className={
+                      !iconUploadStatus
+                        ? 'device-input-loader'
+                        : 'd-none device-input-loader'
+                    }></div>
                 </div>
               </div>
             </div>
