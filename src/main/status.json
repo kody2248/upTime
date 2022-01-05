@@ -1,0 +1,72 @@
+[
+  {
+    "id":1,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"success",
+    "dttm": "2021-10-09 15:49:48"
+  },
+  {
+    "id":2,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"success",
+    "dttm": "2021-01-05 17:33:47"
+  },
+  {
+    "id":3,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"success",
+    "dttm": "2021-08-29 23:29:38"
+  },
+  {
+    "id":4,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"success",
+    "dttm": "2021-04-24 01:24:45"
+  },
+  {
+    "id":5,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"failure",
+    "dttm": "2021-11-03 21:29:05"
+  },
+  {
+    "id":6,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"success",
+    "dttm": "2021-06-27 02:11:55"
+  },
+  {
+    "id":7,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"failure",
+    "dttm": "2021-11-23 14:59:23"
+  },
+  {
+    "id":8,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"success",
+    "dttm": "2021-03-09 20:02:55"
+  },
+  {
+    "id":9,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"failure",
+    "dttm": "2021-05-16 11:26:14"
+  },
+  {
+    "id":10,
+    "deviceId":1,
+    "action":"Pinging Server 192.168.0.24",
+    "result":"success",
+    "dttm": "2021-08-27 07:17:07"
+  }
+]

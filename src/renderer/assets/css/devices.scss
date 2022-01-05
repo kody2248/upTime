@@ -1,0 +1,11 @@
+@import './global.scss';
+
+.device-content-placeholder {
+  position:relative;
+  height:100vh;
+  padding: 250px 0 0;
+  h3 {
+    text-align:center;
+    color: darken($navBackground,5%);
+  }
+}

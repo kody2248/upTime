@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500;600;700&display=swap');
+
+$navBackground: #c7e3ee;
+$contentBackground: #daeff5;
+
+$lightShadow: #6b828b;
+$secondaryColor: #37195c;
+$highlightColor: #ff6653;
+
+
+$mainFont:'Open Sans', sans-serif;
+
+$errorColor: #ec4c90;
+$successColor: #00f70c;
+
+html,body,div,h1,h2,h3,h4,h5,p {
+  font-family:$mainFont !important;
+}
+
+h1,h2,h3,h4,h5 {
+
+  font-weight: 700;
+  color:$secondaryColor;
+
+}
+
+.nav,
+.content {
+  height: 100vh;
+}
+
+.nav {
+  background: $navBackground;
+  width: 20% !important;
+  padding: 20px;
+}
+
+.content {
+  background: $contentBackground;
+  width: 80% !important;
+}
+
+a {
+  color: $lightShadow;
+  text-decoration: none;
+  transition: 250ms ease-in-out;
+  font-size: 14px;
+
+  svg {
+    margin: 0 5px 0 0;
+  }
+
+  &:hover,
+  &.active {
+    color: $secondaryColor;
+  }
+
+}
+
+.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+
+  > .col,
+  > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}

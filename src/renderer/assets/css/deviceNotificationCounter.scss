@@ -1,0 +1,24 @@
+@import './global.scss';
+
+.device-notification-count {
+  background: $navBackground;
+  padding:10px;
+  border-radius: 15px;
+  text-align:center;
+  color:$secondaryColor;
+  h2{
+    color:$highlightColor;
+  }
+
+  p {
+    margin: 0;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size:14px;
+  }
+
+  svg {
+    height:75px;
+    width:75px;
+  }
+}

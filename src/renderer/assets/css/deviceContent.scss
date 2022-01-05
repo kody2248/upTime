@@ -1,0 +1,14 @@
+@import '../css/global.scss';
+
+.device-content {
+
+  padding: 25px;
+  height: 100vh;
+
+}
+
+.radial-graph {
+  margin: 0 auto;
+  display: block;
+  transform: translateY(-30px) rotate(-90deg);
+}

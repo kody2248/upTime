@@ -1,0 +1,36 @@
+@import '../css/global.scss';
+
+.radial-graph {
+  transform: rotate(-90deg);
+  transform-origin: center center;
+
+  .progress-background {
+    stroke: $navBackground;//darken($contentBackground,8%);
+  }
+
+  .progress {
+    transition: stroke-dashoffset 1000ms ease-in-out;
+    box-shadow:0px 0px 10px rgba(0,0,0,0.5);
+    //stroke: url(#MyGradient);
+    stroke:#ff6653;
+  }
+
+  text {
+    transform: rotate(90deg);
+    transform-origin: center center;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    fill:$secondaryColor;
+    &.percentage {
+      font-size: 32px;
+      //text-shadow: 0px 3px 0px rgba(255,255,255,.8);
+    }
+    &.label {
+      text-transform: uppercase;
+      font-weight:700;
+      font-size: 18px;
+      fill:$highlightColor;
+    }
+  }
+
+}

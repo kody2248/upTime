@@ -1,0 +1,39 @@
+@import '../css/global.scss';
+
+.device-graph {
+  background: $contentBackground;
+  margin: 10px 0;
+}
+
+.bar-bg,
+.bar {
+  border-radius:50%;
+}
+
+svg.device-graph {
+  rect:nth-of-type(1) {
+    fill: lighten($successColor,45%);
+  }
+  rect:nth-of-type(3){
+    fill: lighten($successColor,35%);
+  }
+  rect:nth-of-type(2) {
+    fill: lighten($errorColor,25%);
+  }
+  rect:nth-of-type(4){
+    fill: $errorColor;
+  }
+
+}
+
+.device-graph-text, svg {
+  text {
+    fill: darken($navBackground,5%);
+    font-family: $mainFont;
+    font-size:15px;
+    font-weight: 500;
+  }
+  .domain, line {
+    stroke: darken($navBackground,5%);
+  }
+}

@@ -1,0 +1,67 @@
+@import '../css/global.scss';
+
+.device-item-wrap {
+  margin:0 -25px;
+  position: relative;
+  cursor: pointer;
+  padding:0 25px;
+}
+
+.device-item {
+
+  padding: 15px 0;
+  border-bottom: 1px solid darken($navBackground,8%);
+
+  .device-name,
+  .device-address {
+    color: $secondaryColor;
+    margin: 0;
+  }
+
+  .device-name {
+    font-weight: 700;
+    font-size:14px;
+    font-size:1.33vw;
+    line-height: 1rem;
+  }
+
+  .device-address {
+    font-size:12px;
+    font-weight: 400;
+  }
+
+}
+
+.device-icon {
+  border-radius: 4px;
+  height: 30px;
+  width: 30px;
+  overflow: hidden;
+  margin: 0 5px 0 0;
+  float: left;
+  background: $highlightColor;
+
+}
+
+.device-active {
+  position:absolute;
+  right:0px;
+  top:0;
+  bottom:0;
+  margin: auto 0;
+  height:80px;
+  overflow:hidden
+
+}
+
+.active-svg {
+
+  height:80px;
+  width:15px;
+  transition: 400ms ease-in-out;
+
+  path {
+    fill: $contentBackground;
+  }
+
+}

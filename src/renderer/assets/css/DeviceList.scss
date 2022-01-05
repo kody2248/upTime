@@ -1,0 +1,29 @@
+@import './global.scss';
+
+.device-list {
+  background: $navBackground;
+  height: 100vh;
+  padding:25px;
+  margin: 0 -15px;
+  position: relative;
+
+  ul {
+    padding:0;
+    list-style:none;
+  }
+
+}
+
+.nav-border {
+  height:100%;
+  width: 1px;
+  background: darken($navBackground, 8%);
+  float: left;
+  margin: 0 -25px;
+}
+
+.device-add-link {
+  position: absolute;
+  bottom: 25px;
+
+}
