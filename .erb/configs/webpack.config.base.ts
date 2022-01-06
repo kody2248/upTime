@@ -24,6 +24,26 @@ const configuration: webpack.Configuration = {
           },
         },
       },
+      {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: [
+          {
+            loader: '@svgr/webpack',
+    options: {
+        svgoConfig: {
+            plugins: [{
+                name: 'prefixIds',
+                prefixIds: {
+                    prefixIds: false,
+                    prefixClassNames: false
+                }
+            }]
+     }
+}
+          }
+        ],
+      },
     ],
   },
 

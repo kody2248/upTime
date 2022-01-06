@@ -93,27 +93,7 @@ const configuration: webpack.Configuration = {
       {
         test: /\.(png|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
-      },
-      {
-        test: /\.svg$/i,
-        issuer: /\.[jt]sx?$/,
-        use: [
-          {
-            loader: '@svgr/webpack',
-    options: {
-        svgoConfig: {
-            plugins: [{
-                name: 'prefixIds',
-                prefixIds: {
-                    prefixIds: false,
-                    prefixClassNames: false
-                }
-            }]
-     }
-}
-          }
-        ],
-      },
+      }
     ],
   },
   plugins: [

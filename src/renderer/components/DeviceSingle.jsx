@@ -4,7 +4,7 @@ import Snap from 'snapsvg-cjs';
 import '../assets/css/deviceSingle.scss';
 import { exit } from 'process';
 
-import ReactLogo from '../assets/img/DeviceListActive.svg';
+// import ReactLogo from '../assets/img/DeviceListActive.svg';
 
 const DeviceSingle = (props) => {
   // Store status of DOM loading to avoid parse errors
@@ -102,10 +102,10 @@ const DeviceSingle = (props) => {
     [itemDom.current] = itemDom.current;
     console.log(itemDom.current);
     // Parse SVG for animation points
-    arrow.current = Snap.select(`.device-item.item-${id} .svg-line`);
-    finish.current = Snap.select('.svg-active');
-    startPoints.current = arrow.current.node.getAttribute('d');
-    finishPoints.current = finish.current.node.getAttribute('d');
+    // arrow.current = Snap.select(`.device-item.item-${id} .svg-line`);
+    // finish.current = Snap.select('.svg-active');
+    // startPoints.current = arrow.current.node.getAttribute('d');
+    // finishPoints.current = finish.current.node.getAttribute('d');
   }, []);
 
   return (
@@ -130,7 +130,6 @@ const DeviceSingle = (props) => {
         <p className="device-address">{ip}</p>
         <div className="device-active">
           {/* <img src={ActiveIcon} /> */}
-          <ReactLogo className="active-svg" />
         </div>
       </div>
     </div>
