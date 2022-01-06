@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import ImageIcon from '@mui/icons-material/Image';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import '../assets/css/DeviceEdit.scss';
 
 const DeviceEdit = (props) => {
-  const { device, callback } = props;
+  const { device, inputCallback, submitCallback } = props;
   const { name, ip, port, icon } = device;
 
   const [nameState, setName] = useState('');
@@ -215,12 +216,18 @@ const DeviceEdit = (props) => {
           </div>
         </div>
       </div>
+      <div className="text-center">
+        <button className="btn" onClick={submitCallback}>
+          Update <ArrowForwardIcon />
+        </button>
+      </div>
     </div>
   );
 };
 
 DeviceEdit.propTypes = {
-  callback: PropTypes.func,
+  inputCallback: PropTypes.func,
+  submitCallback : PropTypes.func,
   device: PropTypes.shape({
     id: PropTypes.number,
     key: PropTypes.number,
@@ -232,9 +239,8 @@ DeviceEdit.propTypes = {
 };
 
 DeviceEdit.defaultProps = {
-  callback: () => {
-    console.log('default cb');
-  },
+  inputCallback: () => {},
+  submitCallback: () => {},
   device: {
     id: 1,
     key: 1,

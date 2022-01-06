@@ -18,6 +18,7 @@ const Devices = (props) => {
     setSelected(true);
   };
 
+  // Update active device state with new values from form
   const formChange = (type, value) => {
     setActiveDevice((prevState) => ({
       ...prevState,
@@ -49,6 +50,15 @@ const Devices = (props) => {
     );
   };
 
+  const submitDeviceEdits = () => {
+    // Listen for reply from main and set states
+    window.electron.ipcRenderer.on('updateDeviceWidget', (arg) => {
+      console.log(arg);
+    });
+    // Call to main to fetch device list from data
+    window.electron.ipcRenderer.send('updateDeviceWidget', activeDevice);
+  }
+
   useEffect(() => {
     getDevices();
   }, []);
@@ -65,7 +75,8 @@ const Devices = (props) => {
         {selected && (
           <DeviceContent
             device={activeDevice}
-            formCallback={formChange}
+            inputCallback={formChange}
+            submitCallback={submitDeviceEdits}
           />
         )}
       </div>

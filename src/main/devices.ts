@@ -3,8 +3,20 @@ import sharp from 'sharp';
 
 const fs = require('fs');
 const path = require('path');
+const isDevelopment =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-const appData = app.getPath('appData');
+let appData;
+
+if(isDevelopment) {
+  // Returns src dir if dev
+  appData = path.dirname (app.getAppPath());
+} else {
+  // Returns path that exe is being run from
+  appData = path.dirname (app.getPath ('exe'));
+}
+
+appData = path.join(appData, 'resources');
 
 async function resizeImage(event, file, output) {
   try {
@@ -26,7 +38,9 @@ async function resizeImage(event, file, output) {
 }
 
 ipcMain.on('fetchDevices', async (event, arg) => {
-  let devices = fs.readFileSync(`${__dirname}\\devices.json`);
+  console.log('fetch devices');
+  console.log(appData);
+  let devices = fs.readFileSync(`${appData}\\devices.json`);
   devices = JSON.parse(devices);
 
   event.reply('fetchDevices', devices);
@@ -34,13 +48,13 @@ ipcMain.on('fetchDevices', async (event, arg) => {
 
 ipcMain.on('fetchDeviceData', async (event, arg) => {
   console.log('device data ran');
-  let data = fs.readFileSync(`${__dirname}\\status.json`);
+  let data = fs.readFileSync(`${appData}\\status.json`);
   data = JSON.parse(data);
   event.reply('fetchDeviceData', data);
 });
 
 ipcMain.on('imageHandler', (event, arg) => {
-  const dir = `${app.getPath('appData')}\\UpTime\\images`;
+  const dir = `${appData}\\images`;
   const type = arg.type.replace(/(.*)\//g, '');
   const output = `${dir}\\${arg.name}.${type}`;
 
@@ -50,4 +64,9 @@ ipcMain.on('imageHandler', (event, arg) => {
 
   // Sharp decalration incorrect
   resizeImage(event, arg.path, output);
+});
+
+ipcMain.on('updateDeviceWidget', (event, arg) => {
+  // Write to JS file
+  event.reply('updateDeviceWidget', arg);
 });

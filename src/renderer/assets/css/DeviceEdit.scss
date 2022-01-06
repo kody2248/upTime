@@ -53,7 +53,7 @@
   //Displayed if no icon exists
   .device-icon-upload {
     border: 5px dashed $secondaryColor;
-    margin: 20px 0;
+    margin: 20px 0 0;
     border-radius: 15px;
   }
 
@@ -124,6 +124,28 @@
     height: 25px;
     width: 25px;
     background: red;
+  }
+
+  button {
+    border:none;
+    color: $secondaryColor;
+    background: $contentBackground;
+    border-radius: 5px;
+    margin: 10px 0 0;
+    padding: 10px 15px;
+    display: inline-block;
+    transition: all 250ms ease-in-out;
+    font-size: 14px;
+    svg {
+      height: 16px;
+      width: 16px;
+    }
+    &:hover {
+      background: darken($contentBackground,10%);
+    }
+    &:focus{
+      box-shadow: none;
+    }
   }
 
 }

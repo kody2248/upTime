@@ -16,12 +16,12 @@ export default class DeviceContent extends Component {
   }
 
   render() {
-    const {device, formCallback} = this.props;
+    const {device, inputCallback, submitCallback} = this.props;
     return (
       <div className="device-content">
         <div className="row">
           <div className="col-7">
-            <DeviceEdit device={device} callback={formCallback}/>
+            <DeviceEdit device={device} inputCallback={inputCallback} submitCallback={submitCallback} />
           </div>
           <div className="col-5">
             <RadialBar percent={0.33} label="Uptime" size="250" />
