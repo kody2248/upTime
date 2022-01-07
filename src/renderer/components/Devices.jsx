@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 
 import DeviceList from './DeviceList';
 import DeviceContent from './DeviceContent';
 
 import '../assets/css/devices.scss';
 
-const Devices = (props) => {
+const Devices = () => {
   const [devices, setDevices] = useState([]);
   const [activeDevice, setActiveDevice] = useState({});
   const [activeId, setActiveId] = useState(1);
-  const [selected, setSelected] = useState(false)
+  const [selected, setSelected] = useState(false);
 
+  // Device selection callback
   const activate = (device) => {
-    console.log('activate callback ran');
+    console.log(device);
     setActiveDevice(device);
     setSelected(true);
   };
@@ -29,20 +29,24 @@ const Devices = (props) => {
     }));
   };
 
+  // Read datastore to get list of devices
   const getDevices = () => {
+    console.log('get devices ran');
     // Listen for reply from main and set states
     window.electron.ipcRenderer.once('fetchDevices', (arg) => {
       setDevices(arg);
-      setActiveDevice(arg[1]);
-      setActiveId(arg[0].id);
+      // Set initial device if first load
+      if (activeDevice.length === 0) {
+        setActiveDevice(arg[1]);
+        setActiveId(arg[0].id);
+      };
     });
     // Call to main to fetch device list from data
     window.electron.ipcRenderer.send('fetchDevices', '');
   };
 
-  //Placeholder to display before a device is selected
+  // Placeholder to display before a device is selected
   const ContentPlaceholder = () => {
-    console.log('placeholder');
     return (
       <div className="device-content-placeholder">
         <h3>Select a device to review statistics & edit details</h3>
@@ -50,17 +54,26 @@ const Devices = (props) => {
     );
   };
 
-  const submitDeviceEdits = () => {
+  const submitDeviceEdits = (device) => {
+    const newData = {
+      ...device,
+      name: document.getElementById('device-input-name').value,
+      ip: document.getElementById('device-input-address').value,
+      port: document.getElementById('device-input-port').value,
+    };
+
     // Listen for reply from main and set states
     window.electron.ipcRenderer.on('updateDeviceWidget', (arg) => {
-      console.log(arg);
+      // refresh devices on return
+      getDevices();
     });
     // Call to main to fetch device list from data
-    window.electron.ipcRenderer.send('updateDeviceWidget', activeDevice);
-  }
+    window.electron.ipcRenderer.send('updateDeviceWidget', newData);
+  };
 
   useEffect(() => {
     getDevices();
+    console.log(devices);
   }, []);
 
   useEffect(() => {}, [devices, activeDevice, activeId]);
@@ -83,9 +96,5 @@ const Devices = (props) => {
     </div>
   );
 };
-
-// Devices.propTypes = {
-
-// }
 
 export default Devices;

@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
@@ -10,15 +13,13 @@ import '../assets/css/DeviceEdit.scss';
 
 const DeviceEdit = (props) => {
   const { device, inputCallback, submitCallback } = props;
-  const { name, ip, port, icon } = device;
 
   const [nameState, setName] = useState('');
   const [ipState, setIp] = useState('');
   const [portState, setPort] = useState('');
   const [iconState, setIcon] = useState('');
 
-  const [iconUpload, setIconUpload] = useState('');
-  const [iconUploadStatus, seticonUploadStatus] = useState(false)
+  const [iconUploadStatus, seticonUploadStatus] = useState(false);
 
   const toggleImage = () => {
     let image = document.getElementsByClassName('device-icon-display');
@@ -33,6 +34,7 @@ const DeviceEdit = (props) => {
       image.style.opacity = 0;
       setTimeout(() => {
         image.classList.add('d-none');
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         toggleUpload();
       }, 250);
     }
@@ -56,41 +58,65 @@ const DeviceEdit = (props) => {
     }
   };
 
-  const handleUpload = (e) => {
-    const {
-      lastModified,
-      lastModifiedDate,
-      name: imgName,
-      path,
-      size,
-      type,
-    } = e.target.files[0];
-    setIcon({
-      name: imgName,
-      path: `file:\\\\${path}`,
-      size,
-      type,
-    });
+  const getReadableFileSizeString = (fileSizeInBytes) => {
+    let i = -1;
+    const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+    do {
+      fileSizeInBytes /= 1024;
+      i += 1;
+    } while (fileSizeInBytes > 1024);
 
-    console.log(iconState.path);
+    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+  };
+
+  const test = () => {
+    setIcon(device.icon);
+    seticonUploadStatus(true);
+  };
+
+  // Strictly image handling
+  const handleImageUpload = (e) => {
+    const { path, size, type } = e.target.files[0];
+
+    console.log(e.target.files[0]);
 
     // Listen for reply from main and set states
     window.electron.ipcRenderer.on('imageHandler', (arg) => {
+      console.log('back from main on image upload');
       console.log(arg);
-      console.log('render image handler');
+      console.log(arg.name);
+      // Update device object to reflect icon changes
+      device.icon = {
+        ...device.icon,
+        name: arg.name !== undefined ? arg.name : device.icon.name,
+        path: arg.output !== undefined ? arg.output : device.icon.path,
+        size: `${getReadableFileSizeString(size)} mb`,
+      };
+
+      setIcon(device.icon);
       seticonUploadStatus(true);
+
+      console.log(device.icon);
+      console.log(iconState);
+      test();
     });
-    // Call to main to fetch device list from data
-    window.electron.ipcRenderer.send('imageHandler', { path, name: nameState, type });
+    // Call to submit
+    window.electron.ipcRenderer.send('imageHandler', {
+      id: device.id,
+      path,
+      size: `${getReadableFileSizeString(size)} mb`,
+      name: nameState,
+      type,
+    });
   };
 
   // Fire when new object is passed
   useEffect(() => {
-    console.log(device);
-    setName(name);
-    setIp(ip);
-    setPort(port);
-    setIcon(icon);
+    // Call via property vs upperscope declaration to avoid eslint errors
+    setName(device.name);
+    setIp(device.ip);
+    setPort(device.port);
+    setIcon(device.icon);
   }, [device]);
 
   return (
@@ -100,6 +126,7 @@ const DeviceEdit = (props) => {
       </div>
       <div className="row">
         <div className="col-md-12">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="device-input-name" className="col-form-label">
             Device:
           </label>
@@ -109,37 +136,39 @@ const DeviceEdit = (props) => {
             className="form-control"
             value={nameState}
             onChange={(e) => {
-              callback('name', e.target.value);
+              inputCallback('name', e.target.value);
             }}
           />
         </div>
       </div>
       <div className="row">
         <div className="col-md-8">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="device-input-address" className="col-form-label">
             Address:
           </label>
           <input
-            id="device-input-name"
+            id="device-input-address"
             type="text"
             className="form-control"
             value={ipState}
             onChange={(e) => {
-              callback('ip', e.target.value);
+              inputCallback('ip', e.target.value);
             }}
           />
         </div>
         <div className="col-md-4">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="device-input-port" className="col-form-label">
             Port:
           </label>
           <input
-            id="device-input-name"
+            id="device-input-port"
             type="text"
             className="form-control"
             value={portState}
             onChange={(e) => {
-              callback('port', e.target.value);
+              inputCallback('port', e.target.value);
             }}
           />
         </div>
@@ -149,7 +178,7 @@ const DeviceEdit = (props) => {
           {/* Display Icon if exists */}
           <div
             className={
-              iconState === ''
+              Object.keys(device.icon).length < 0
                 ? 'device-icon-display d-none'
                 : 'device-icon-display'
             }
@@ -178,11 +207,13 @@ const DeviceEdit = (props) => {
                   >
                     <DeleteForeverIcon />
                   </div>
-                  <div className={
+                  <div
+                    className={
                       !iconUploadStatus
                         ? 'device-input-loader'
                         : 'd-none device-input-loader'
-                    }></div>
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -190,7 +221,7 @@ const DeviceEdit = (props) => {
           {/* Display upload if doesn't exist */}
           <div
             className={
-              iconState === ''
+              Object.keys(device.icon).length > 0
                 ? 'device-icon-upload'
                 : 'device-icon-upload d-none'
             }
@@ -210,14 +241,20 @@ const DeviceEdit = (props) => {
               id="device-input-icon"
               type="file"
               onChange={(e) => {
-                handleUpload(e);
+                handleImageUpload(e);
               }}
             />
           </div>
         </div>
       </div>
       <div className="text-center">
-        <button className="btn" onClick={submitCallback}>
+        <button
+          type="submit"
+          className="btn"
+          onClick={() => {
+            submitCallback(device);
+          }}
+        >
           Update <ArrowForwardIcon />
         </button>
       </div>
@@ -227,14 +264,19 @@ const DeviceEdit = (props) => {
 
 DeviceEdit.propTypes = {
   inputCallback: PropTypes.func,
-  submitCallback : PropTypes.func,
+  submitCallback: PropTypes.func,
   device: PropTypes.shape({
     id: PropTypes.number,
     key: PropTypes.number,
     name: PropTypes.string,
     ip: PropTypes.string,
     port: PropTypes.string,
-    icon: PropTypes.string,
+    icon: PropTypes.shape({
+      name: PropTypes.string,
+      path: PropTypes.string,
+      size: PropTypes.string,
+      type: PropTypes.string,
+    }),
   }),
 };
 
@@ -244,7 +286,12 @@ DeviceEdit.defaultProps = {
   device: {
     id: 1,
     key: 1,
-    icon: '',
+    icon: {
+      name: '',
+      path: '',
+      size: '0 mb',
+      type: '',
+    },
     name: '',
     ip: '',
   },

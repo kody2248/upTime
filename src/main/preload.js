@@ -5,11 +5,17 @@ contextBridge.exposeInMainWorld('electron', {
     myPing() {
       ipcRenderer.send('ipc-example', 'ping');
     },
-    send(channel, vars){
-      ipcRenderer.send(channel,vars);
+    send(channel, vars) {
+      ipcRenderer.send(channel, vars);
     },
     on(channel, func) {
-      const validChannels = ['ipc-example', 'fetchDevices','fetchDeviceData', 'imageHandler', 'updateDeviceWidget'];
+      const validChannels = [
+        'ipc-example',
+        'fetchDevices',
+        'fetchDeviceData',
+        'imageHandler',
+        'updateDeviceWidget',
+      ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
         ipcRenderer.on(channel, (event, ...args) => func(...args));

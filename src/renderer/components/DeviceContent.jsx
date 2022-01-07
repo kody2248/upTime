@@ -12,16 +12,19 @@ export default class DeviceContent extends Component {
     this.state = {};
   }
 
-  componentDidUpdate() {
-  }
+  componentDidUpdate() {}
 
   render() {
-    const {device, inputCallback, submitCallback} = this.props;
+    const { device, inputCallback, submitCallback } = this.props;
     return (
       <div className="device-content">
         <div className="row">
           <div className="col-7">
-            <DeviceEdit device={device} inputCallback={inputCallback} submitCallback={submitCallback} />
+            <DeviceEdit
+              device={device}
+              inputCallback={inputCallback}
+              submitCallback={submitCallback}
+            />
           </div>
           <div className="col-5">
             <RadialBar percent={0.33} label="Uptime" size="250" />
@@ -34,11 +37,17 @@ export default class DeviceContent extends Component {
 
 // ES Lint requires defining propTypes to ensure understanding
 DeviceContent.propTypes = {
-  formCallback: PropTypes.func,
+  inputCallback: PropTypes.func,
+  submitCallback: PropTypes.func,
   device: PropTypes.shape({
     id: PropTypes.number,
     key: PropTypes.number,
-    icon: PropTypes.string,
+    icon: PropTypes.shape({
+      name: PropTypes.string,
+      path: PropTypes.string,
+      size: PropTypes.string,
+      type: PropTypes.string,
+    }),
     name: PropTypes.string,
     ip: PropTypes.string,
   }),
@@ -46,11 +55,17 @@ DeviceContent.propTypes = {
 
 // Default options for props
 DeviceContent.defaultProps = {
-  formCallback: ()=>{},
+  inputCallback: () => {},
+  submitCallback: () => {},
   device: {
     id: 1,
     key: 1,
-    icon: '',
+    icon: {
+      name: '',
+      path: '',
+      size: '0 mb',
+      type: '',
+    },
     name: '',
     ip: '',
   },

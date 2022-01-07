@@ -1,23 +1,15 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import Snap from 'snapsvg-cjs';
 import '../assets/css/deviceSingle.scss';
-import { exit } from 'process';
 
+import activeIcon from '../assets/img/deviceListActive.png';
 // import ReactLogo from '../assets/img/DeviceListActive.svg';
 
 const DeviceSingle = (props) => {
-  // Store status of DOM loading to avoid parse errors
-  const [domLoaded, setDomLoaded] = useState(false);
   // Pull in props
-  const { id, icon, name, ip, port, callback, activeId } = props;
+  const { id, icon, name, ip, port, callback } = props;
   // Current list item DOM
   const itemDom = useRef();
-  // Parse SVG for animation points
-  const arrow = useRef();
-  const finish = useRef();
-  const startPoints = useRef();
-  const finishPoints = useRef();
 
   const limitActive = (type) => {
     let val = false;
@@ -45,74 +37,34 @@ const DeviceSingle = (props) => {
     return val;
   };
 
-  const startToFinish = () => {
-    if (limitActive('notActive')) {
-      arrow.current.animate(
-        { d: finishPoints.current },
-        300,
-        mina.backout,
-        () => {}
-      );
-    }
-  };
-
-  const finishToStart = () => {
-    if (limitActive('notActive')) {
-      arrow.current.animate(
-        { d: startPoints.current },
-        300,
-        mina.backout,
-        () => {}
-      );
-    }
-  };
-
-  const activate = (activeId) => {
-    let currentItem;
-
+  const activate = () => {
     if (limitActive('othersActive')) {
       const allItems = document.querySelectorAll('.device-item');
       allItems.forEach((item) => {
         item.classList.remove('active');
-        if (item.classList[1] !== `item-${activeId}`) {
-          currentItem = Snap.select(
-            `.${item.classList[0]}.${item.classList[1]} .svg-line`
-          );
-          currentItem.animate(
-            { d: startPoints.current },
-            300,
-            mina.easein,
-            () => {}
-          );
-        }
       });
     }
-    if (itemDom.current.classList.contains('active')) {
-      itemDom.current.classList.remove('active');
-      finishToStart();
-    } else {
-      itemDom.current.classList.add('active');
-      startToFinish();
-    }
+
+    itemDom.current.classList.toggle('active');
+
     callback({ id, icon, name, ip, port });
   };
 
   useEffect(() => {
     itemDom.current = document.getElementsByClassName(`device-item item-${id}`);
     [itemDom.current] = itemDom.current;
-    console.log(itemDom.current);
     // Parse SVG for animation points
     // arrow.current = Snap.select(`.device-item.item-${id} .svg-line`);
     // finish.current = Snap.select('.svg-active');
     // startPoints.current = arrow.current.node.getAttribute('d');
     // finishPoints.current = finish.current.node.getAttribute('d');
-  }, []);
+  }, [id]);
 
   return (
     <div
       className="device-item-wrap"
-      onMouseEnter={startToFinish}
-      onMouseLeave={finishToStart}
+      // onMouseEnter={startToFinish}
+      // onMouseLeave={finishToStart}
       onClick={() => {
         activate(id);
       }}
@@ -124,18 +76,48 @@ const DeviceSingle = (props) => {
     >
       <div className={`device-item item-${id}`}>
         <div className="device-icon">
-          <img src={icon} alt="" />
+          <img src={icon.path} alt="" />
         </div>
         <p className="device-name">{name}</p>
         <p className="device-address">{ip}</p>
         <div className="device-active">
           {/* <img src={ActiveIcon} /> */}
+          <img
+            className="device-active-icon"
+            alt="active-icon"
+            src={activeIcon}
+          />
         </div>
       </div>
     </div>
   );
 };
+DeviceSingle.propTypes = {
+  id: PropTypes.number,
+  name: PropTypes.string,
+  ip: PropTypes.string,
+  port: PropTypes.string,
+  icon: PropTypes.shape({
+    name: PropTypes.string,
+    path: PropTypes.string,
+    size: PropTypes.string,
+    type: PropTypes.string,
+  }),
+  callback: PropTypes.func,
+};
 
-DeviceSingle.propTypes = {};
+DeviceSingle.defaultProps = {
+  id: 1,
+  icon: {
+    name: '',
+    path: '',
+    size: '0 mb',
+    type: '',
+  },
+  name: '',
+  ip: '',
+  port: '',
+  callback: () => {},
+};
 
 export default DeviceSingle;
