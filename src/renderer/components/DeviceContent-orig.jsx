@@ -1,46 +1,46 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import DeviceEdit from './DeviceEdit';
 import RadialBar from './RadialBar';
 
-import '../assets/css/DeviceContent.scss';
+import '../assets/css/deviceContent.scss';
 
-const DeviceContent = (props) => {
-  const {
-    device,
-    inputCallback,
-    submitCallback,
-    imageDeleteCallback,
-    imageUploadCallback,
-  } = props;
+export default class DeviceContent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-  return (
-    <div className="device-content">
-      <div className="row">
-        <div className="col-7">
-          <DeviceEdit
-            device={device}
-            inputCallback={inputCallback}
-            submitCallback={submitCallback}
-            imageDeleteCallback={imageDeleteCallback}
-            imageUploadCallback={imageUploadCallback}
-          />
-        </div>
-        <div className="col-5">
-          <RadialBar id={device.id} percent={device.id/10} label="Uptime" size="250" />
+  componentDidUpdate() {}
+
+  render() {
+    const { device, inputCallback, submitCallback, imageDeleteCallback } = this.props;
+    return (
+      <div className="device-content">
+        <div className="row">
+          <div className="col-7">
+            <DeviceEdit
+              device={device}
+              inputCallback={inputCallback}
+              submitCallback={submitCallback}
+              imageDeleteCallback={imageDeleteCallback}
+            />
+          </div>
+          <div className="col-5">
+            <RadialBar percent={0.33} label="Uptime" size="250" />
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 // ES Lint requires defining propTypes to ensure understanding
 DeviceContent.propTypes = {
   inputCallback: PropTypes.func,
   submitCallback: PropTypes.func,
   imageDeleteCallback: PropTypes.func,
-  imageUploadCallback: PropTypes.func,
   device: PropTypes.shape({
     id: PropTypes.number,
     key: PropTypes.number,
@@ -60,7 +60,6 @@ DeviceContent.defaultProps = {
   inputCallback: () => {},
   submitCallback: () => {},
   imageDeleteCallback: () => {},
-  imageUploadCallback: () => {},
   device: {
     id: 1,
     key: 1,
@@ -74,5 +73,3 @@ DeviceContent.defaultProps = {
     ip: '',
   },
 };
-
-export default DeviceContent;

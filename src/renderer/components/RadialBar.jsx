@@ -96,7 +96,7 @@ const RadialBar = (props) => {
     return () => {
       svg.selectAll('*').remove();
     };
-  }, [id]);
+  }, [id, label, percent, size]);
 
   return <svg className="radial-graph" height={size} width={size * 0.75} />;
 };

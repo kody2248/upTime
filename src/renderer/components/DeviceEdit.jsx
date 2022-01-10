@@ -12,15 +12,20 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../assets/css/DeviceEdit.scss';
 
 const DeviceEdit = (props) => {
-  const { device, inputCallback, submitCallback } = props;
+  const {
+    device,
+    inputCallback,
+    submitCallback,
+    imageDeleteCallback,
+    imageUploadCallback,
+  } = props;
 
   const [nameState, setName] = useState('');
   const [ipState, setIp] = useState('');
   const [portState, setPort] = useState('');
   const [iconState, setIcon] = useState('');
 
-  const [iconUploadStatus, seticonUploadStatus] = useState(false);
-
+  // Hide or show image display if icon is present
   const toggleImage = () => {
     let image = document.getElementsByClassName('device-icon-display');
     [image] = image;
@@ -40,6 +45,7 @@ const DeviceEdit = (props) => {
     }
   };
 
+  // Hide or show image display if icon is present
   const toggleUpload = () => {
     let input = document.getElementsByClassName('device-icon-upload');
     [input] = input;
@@ -58,6 +64,7 @@ const DeviceEdit = (props) => {
     }
   };
 
+  // Format bytes to readable string
   const getReadableFileSizeString = (fileSizeInBytes) => {
     let i = -1;
     const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -69,55 +76,39 @@ const DeviceEdit = (props) => {
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
   };
 
-  const test = () => {
-    setIcon(device.icon);
-    seticonUploadStatus(true);
+  // Image input onChange
+  const imageUpload = (e) => {
+    const { path, size, type } = e.target.files[0];
+    imageUploadCallback(path, getReadableFileSizeString(size), type);
   };
 
-  // Strictly image handling
-  const handleImageUpload = (e) => {
-    const { path, size, type } = e.target.files[0];
-
-    console.log(e.target.files[0]);
-
-    // Listen for reply from main and set states
-    window.electron.ipcRenderer.on('imageHandler', (arg) => {
-      console.log('back from main on image upload');
-      console.log(arg);
-      console.log(arg.name);
-      // Update device object to reflect icon changes
-      device.icon = {
-        ...device.icon,
-        name: arg.name !== undefined ? arg.name : device.icon.name,
-        path: arg.output !== undefined ? arg.output : device.icon.path,
-        size: `${getReadableFileSizeString(size)} mb`,
-      };
-
-      setIcon(device.icon);
-      seticonUploadStatus(true);
-
-      console.log(device.icon);
-      console.log(iconState);
-      test();
-    });
-    // Call to submit
-    window.electron.ipcRenderer.send('imageHandler', {
-      id: device.id,
-      path,
-      size: `${getReadableFileSizeString(size)} mb`,
-      name: nameState,
-      type,
-    });
+  const imageDelete = () => {
+    toggleImage();
+    imageDeleteCallback();
   };
 
   // Fire when new object is passed
   useEffect(() => {
+    const upload = document.getElementById('device-icon-upload');
+    const display = document.getElementById('device-icon-display');
     // Call via property vs upperscope declaration to avoid eslint errors
     setName(device.name);
     setIp(device.ip);
     setPort(device.port);
     setIcon(device.icon);
-  }, [device]);
+
+    upload.style.opacity = 1;
+    display.style.opacity = 1;
+  }, [
+    device.name,
+    device.ip,
+    device.port,
+    device.icon,
+    nameState,
+    ipState,
+    portState,
+    iconState,
+  ]);
 
   return (
     <div className="device-form">
@@ -177,8 +168,9 @@ const DeviceEdit = (props) => {
         <div className="col-md-12">
           {/* Display Icon if exists */}
           <div
+            id="device-icon-display"
             className={
-              Object.keys(device.icon).length < 0
+              device.icon.name === ''
                 ? 'device-icon-display d-none'
                 : 'device-icon-display'
             }
@@ -195,33 +187,23 @@ const DeviceEdit = (props) => {
                 </div>
                 <div className="col-md-3">
                   <div
-                    className={
-                      iconUploadStatus
-                        ? 'device-icon-controls'
-                        : 'd-none device-icon-controls'
-                    }
+                    className="device-icon-controls"
                     role="button"
                     tabIndex="0"
-                    onClick={toggleImage}
-                    onKeyPress={toggleImage}
+                    onClick={imageDelete}
+                    onKeyPress={imageDelete}
                   >
                     <DeleteForeverIcon />
                   </div>
-                  <div
-                    className={
-                      !iconUploadStatus
-                        ? 'device-input-loader'
-                        : 'd-none device-input-loader'
-                    }
-                  />
                 </div>
               </div>
             </div>
           </div>
           {/* Display upload if doesn't exist */}
           <div
+            id="device-icon-upload"
             className={
-              Object.keys(device.icon).length > 0
+              device.icon.name === ''
                 ? 'device-icon-upload'
                 : 'device-icon-upload d-none'
             }
@@ -229,9 +211,6 @@ const DeviceEdit = (props) => {
             <label
               htmlFor="device-input-icon"
               className="col-form-label input-icon-label"
-              onClick={() => {
-                toggleUpload();
-              }}
             >
               <ImageIcon />
               <p>Upload Icon</p>
@@ -241,7 +220,7 @@ const DeviceEdit = (props) => {
               id="device-input-icon"
               type="file"
               onChange={(e) => {
-                handleImageUpload(e);
+                imageUpload(e);
               }}
             />
           </div>
@@ -265,6 +244,8 @@ const DeviceEdit = (props) => {
 DeviceEdit.propTypes = {
   inputCallback: PropTypes.func,
   submitCallback: PropTypes.func,
+  imageDeleteCallback: PropTypes.func,
+  imageUploadCallback: PropTypes.func,
   device: PropTypes.shape({
     id: PropTypes.number,
     key: PropTypes.number,
@@ -283,6 +264,8 @@ DeviceEdit.propTypes = {
 DeviceEdit.defaultProps = {
   inputCallback: () => {},
   submitCallback: () => {},
+  imageDeleteCallback: () => {},
+  imageUploadCallback: () => {},
   device: {
     id: 1,
     key: 1,

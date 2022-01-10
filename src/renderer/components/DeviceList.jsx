@@ -5,11 +5,11 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeviceSingle from './DeviceSingle';
 import '../assets/css/DeviceList.scss';
 
-  const DeviceList = (props) => {
+const DeviceList = (props) => {
   const { callback, devices } = props;
 
   useEffect(() => {
-    console.log(devices);
+    console.log('Device list: Render');
   });
 
   return (
@@ -62,8 +62,8 @@ DeviceList.propTypes = {
 
 DeviceList.defaultProps = {
   callback: () => {},
-  devices:
-    [{
+  devices: [
+    {
       id: 1,
       key: 1,
       icon: {
@@ -74,7 +74,8 @@ DeviceList.defaultProps = {
       },
       name: '',
       ip: '',
-    }],
+    },
+  ],
 };
 
 export default DeviceList;

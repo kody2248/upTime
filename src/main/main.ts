@@ -18,6 +18,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
 import './devices';
+import './database.ts';
 
 export default class AppUpdater {
   constructor() {

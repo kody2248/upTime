@@ -14,7 +14,8 @@ contextBridge.exposeInMainWorld('electron', {
         'fetchDevices',
         'fetchDeviceData',
         'imageHandler',
-        'updateDeviceWidget',
+        'updateDeviceJSON',
+        'imageDelete',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

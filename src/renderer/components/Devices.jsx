@@ -13,7 +13,6 @@ const Devices = () => {
 
   // Device selection callback
   const activate = (device) => {
-    console.log(device);
     setActiveDevice(device);
     setSelected(true);
   };
@@ -29,17 +28,77 @@ const Devices = () => {
     }));
   };
 
+  const imageDelete = (icon) => {
+    const newData = {
+      ...activeDevice,
+      icon: {
+        name: '',
+        path: '',
+        size: '',
+        type: '',
+      },
+    };
+    // Call to main to fetch device list from data
+    window.electron.ipcRenderer.send('imageDelete', {
+      icon: activeDevice.icon,
+      devices: addDeviceToMaster(newData),
+    });
+    // Listen for reply from main and set states
+    window.electron.ipcRenderer.on('imageDelete', (arg) => {
+      console.log('response from image delete');
+      console.log(arg);
+    });
+  };
+
+
+  //Image upload handler
+  const imageUpload = ( path, size, type ) => {
+
+    console.log('image upload');
+
+    // Call to submit
+    window.electron.ipcRenderer.send('imageHandler', {
+      id: activeDevice.id,
+      name: activeDevice.id,
+      type,
+      path,
+    });
+
+        // Listen for reply from main and set states
+    window.electron.ipcRenderer.on('imageHandler', (arg) => {
+      // Update device object to reflect icon changes
+      const newData = {
+      ...activeDevice,
+      icon: {
+        name: arg.fileName,
+        path: arg.output,
+        size: size,
+        type: arg.type,
+      },
+    };
+
+      setActiveDevice(newData);
+      const newDevices = addDeviceToMaster(newData);
+      console.log('New devices:');
+      console.log(newDevices);
+      console.log('active device');
+      console.log(activeDevice);
+      window.electron.ipcRenderer.send('updateDeviceJSON', newDevices);
+    });
+
+  }
+
   // Read datastore to get list of devices
   const getDevices = () => {
-    console.log('get devices ran');
     // Listen for reply from main and set states
     window.electron.ipcRenderer.once('fetchDevices', (arg) => {
-      setDevices(arg);
+      console.log(arg);
+      setDevices(arg.devices);
       // Set initial device if first load
       if (activeDevice.length === 0) {
-        setActiveDevice(arg[1]);
-        setActiveId(arg[0].id);
-      };
+        setActiveDevice(arg.devices[1]);
+        setActiveId(arg.devices[0].id);
+      }
     });
     // Call to main to fetch device list from data
     window.electron.ipcRenderer.send('fetchDevices', '');
@@ -54,27 +113,68 @@ const Devices = () => {
     );
   };
 
-  const submitDeviceEdits = (device) => {
+  const submitDeviceEdits = (currentDevice) => {
     const newData = {
-      ...device,
+      ...currentDevice,
       name: document.getElementById('device-input-name').value,
       ip: document.getElementById('device-input-address').value,
       port: document.getElementById('device-input-port').value,
     };
 
+    const newDevices = addDeviceToMaster(newData);
+    console.log('New data being added to master list and JSON');
+    console.log(newDevices);
+    // Call to main to fetch device list from data
+    window.electron.ipcRenderer.send('updateDeviceJSON', newDevices);
+
     // Listen for reply from main and set states
-    window.electron.ipcRenderer.on('updateDeviceWidget', (arg) => {
+    window.electron.ipcRenderer.on('updateDeviceJSON', (arg) => {
       // refresh devices on return
       getDevices();
     });
-    // Call to main to fetch device list from data
-    window.electron.ipcRenderer.send('updateDeviceWidget', newData);
   };
 
   useEffect(() => {
     getDevices();
-    console.log(devices);
+    console.log('Devices master: Get Devices');
   }, []);
+
+  // Update overall device state with new device object
+  const addDeviceToMaster = (newData) => {
+    const newDevices = devices.map((item) => {
+      if (item.id === newData.id) {
+        item = {
+          id: item.id,
+          name: newData.name !== item.name ? newData.name : item.name,
+          ip: newData.ip !== item.ip ? newData.ip : item.ip,
+          port: newData.port !== item.port ? newData.port : item.port,
+          icon: {
+            name:
+              newData.icon.name !== item.icon.name
+                ? newData.icon.name
+                : item.icon.name,
+            path:
+              newData.icon.path !== item.icon.path
+                ? newData.icon.path
+                : item.icon.path,
+            size:
+              newData.icon.size !== item.icon.size
+                ? newData.icon.size
+                : item.icon.size,
+            type:
+              newData.icon.type !== item.icon.type
+                ? newData.icon.type
+                : item.icon.type,
+          },
+        };
+      }
+      return item;
+    });
+
+    setDevices(newDevices);
+    console.log(devices);
+    return newDevices;
+  };
 
   useEffect(() => {}, [devices, activeDevice, activeId]);
 
@@ -90,6 +190,8 @@ const Devices = () => {
             device={activeDevice}
             inputCallback={formChange}
             submitCallback={submitDeviceEdits}
+            imageDeleteCallback={imageDelete}
+            imageUploadCallback={imageUpload}
           />
         )}
       </div>
