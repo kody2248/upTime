@@ -28,7 +28,7 @@ const Devices = () => {
     }));
   };
 
-  const imageDelete = (icon) => {
+  const imageDelete = () => {
     const newData = {
       ...activeDevice,
       icon: {
@@ -44,16 +44,11 @@ const Devices = () => {
       devices: addDeviceToMaster(newData),
     });
     // Listen for reply from main and set states
-    window.electron.ipcRenderer.on('imageDelete', (arg) => {
-      console.log('response from image delete');
-      console.log(arg);
-    });
+    window.electron.ipcRenderer.on('imageDelete', () => {});
   };
 
-
-  //Image upload handler
-  const imageUpload = ( path, size, type ) => {
-
+  // Image upload handler
+  const imageUpload = (path, size, type) => {
     console.log('image upload');
 
     // Call to submit
@@ -64,18 +59,18 @@ const Devices = () => {
       path,
     });
 
-        // Listen for reply from main and set states
+    // Listen for reply from main and set states
     window.electron.ipcRenderer.on('imageHandler', (arg) => {
       // Update device object to reflect icon changes
       const newData = {
-      ...activeDevice,
-      icon: {
-        name: arg.fileName,
-        path: arg.output,
-        size: size,
-        type: arg.type,
-      },
-    };
+        ...activeDevice,
+        icon: {
+          name: arg.fileName,
+          path: arg.output,
+          size,
+          type: arg.type,
+        },
+      };
 
       setActiveDevice(newData);
       const newDevices = addDeviceToMaster(newData);
@@ -85,8 +80,7 @@ const Devices = () => {
       console.log(activeDevice);
       window.electron.ipcRenderer.send('updateDeviceJSON', newDevices);
     });
-
-  }
+  };
 
   // Read datastore to get list of devices
   const getDevices = () => {

@@ -28,7 +28,12 @@ const DeviceContent = (props) => {
           />
         </div>
         <div className="col-5">
-          <RadialBar id={device.id} percent={device.id/10} label="Uptime" size="250" />
+          <RadialBar
+            id={device.id}
+            percent={device.id / 10}
+            label="Uptime"
+            size="250"
+          />
         </div>
       </div>
     </div>
